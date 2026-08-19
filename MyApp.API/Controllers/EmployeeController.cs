@@ -10,6 +10,7 @@ namespace MyApp.API.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
+
         private readonly IEmployeeService employeeService;
         private readonly IValidator<AddEmployeeDTO> validator;
         public EmployeeController(IEmployeeService employeeService, IValidator<AddEmployeeDTO> validator)
