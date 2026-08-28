@@ -10,6 +10,7 @@ namespace MyApp.Application
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
             return services;
         }
     }

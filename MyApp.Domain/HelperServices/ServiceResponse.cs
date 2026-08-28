@@ -15,4 +15,12 @@ namespace MyApp.Domain.HelperServices
         public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.OK;
         public string? Error { get; set; }
     }
+
+    public class DeleteServiceResponse<T>
+    {
+        public bool Success { get; set; } = true;
+        public string? Error { get; set; }
+        public string? Message { get; set; }
+
+    }
 }

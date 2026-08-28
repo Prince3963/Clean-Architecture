@@ -24,16 +24,33 @@ namespace MyApp.Infrastrcture.RepoImplementation
             return employee;
         }
 
-        public async Task<Employee> DeleteEmployee(int id)
+        public async Task<bool> BulkDelete(List<int> ids)
+        {
+            var empIds = await dbContext.Employees.Where(e => ids.Contains(e.Id) && e.IsDelete == false).ToListAsync();
+            
+            if (empIds == null)
+            {
+                throw new Exception("Employee are not found");
+            }
+
+            foreach(var emp in empIds)
+            {
+                emp.IsDelete = true;
+            }
+            await dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteEmployee(int id)
         {
             var empId = await dbContext.Employees.FirstOrDefaultAsync(e => e.Id == id);
-            if (empId != null)
+            if (empId == null || empId.IsDelete == true)
             {
-                empId.IsDelete = true;
+                throw new Exception("Employee not found or already deleted");
             }
-            empId.IsDelete = false;
+            empId.IsDelete = true;
             await dbContext.SaveChangesAsync();
-            return empId;
+            return true;
         }
 
         public async Task<List<Employee>> GetEmployee()

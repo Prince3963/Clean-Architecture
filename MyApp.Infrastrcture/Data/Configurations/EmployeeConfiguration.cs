@@ -23,6 +23,11 @@ namespace MyApp.Infrastrcture.Data.Configurations
                 .HasColumnType("decimal(18,2)");
 
             builder.ToTable("Employees", e => e.HasCheckConstraint("CK_Employees_Salary", "[Salary] > 0"));
+
+            builder.HasOne(e => e.Department)
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

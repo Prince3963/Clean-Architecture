@@ -67,25 +67,40 @@ namespace MyApp.Application.Services.Implementation
             }
         }
 
-        public async Task<ServiceResponse<Employee>> DeleteEmployee(int id)
+        public async Task<DeleteServiceResponse<bool>> BulkDelete(List<int> ids)
         {
-            var response = new ServiceResponse<Employee>();
+            var response = new DeleteServiceResponse<bool>();
+            try
+            {
+                var result = await employeeRepo.BulkDelete(ids);
+                response.Success = true;
+                response.Message = "Employees Deleted Successfully";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Error = ex.Message;
+                return response;
+            }
+        }
+
+        public async Task<DeleteServiceResponse<bool>> DeleteEmployee(int id)
+        {
+            var response = new DeleteServiceResponse<bool>();
             try
             {
 
                 var result = await employeeRepo.DeleteEmployee(id);
 
-                response.Data = result;
                 response.Success = true;
                 response.Message = "Employee Deleted Successfully";
-                response.StatusCode = HttpStatusCode.OK;
 
                 return response;
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = "Employee not registerd";
                 response.Error = ex.Message;
 
                 return response;

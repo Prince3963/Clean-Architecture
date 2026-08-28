@@ -38,6 +38,13 @@ namespace MyApp.API.Controllers
             return Ok(newEmployee);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, AddEmployeeDTO employee)
+        {
+            var updatedEmployee = await employeeService.UpdateEmployee(employee, id);
+            return Ok(updatedEmployee);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
@@ -45,11 +52,11 @@ namespace MyApp.API.Controllers
             return Ok(deletedEmployee);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, AddEmployeeDTO employee)
+        [HttpDelete("bulk-delete")]
+        public async Task<IActionResult> BulkDelete([FromBody] List<int> ids)
         {
-            var updatedEmployee = await employeeService.UpdateEmployee(employee, id);
-            return Ok(updatedEmployee);
+            var deletedEmployees = await employeeService.BulkDelete(ids);
+            return Ok(deletedEmployees);
         }
     }
 }

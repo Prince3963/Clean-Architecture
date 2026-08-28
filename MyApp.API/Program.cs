@@ -1,5 +1,6 @@
 using FluentValidation;
 using MyApp.Application;
+using MyApp.Application.Validator.DepartmentValidation;
 using MyApp.Domain.Validator.EmployeeValidation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAPIDI();
 builder.Services.AddValidatorsFromAssemblyContaining<AddEmployeeValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<DepartmentValidator>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -16,6 +16,7 @@ namespace MyApp.Infrastcture
             });
 
             services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+            services.AddScoped<IDepartmentRepo, DepartmentRepo>();
 
             return services;
         }

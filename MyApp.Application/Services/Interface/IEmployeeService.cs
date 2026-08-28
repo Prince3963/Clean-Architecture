@@ -8,7 +8,8 @@ namespace MyApp.Application.Services.Interface
     {
         public Task<ServiceResponse<List<Employee>>> GetEmployee();
         public Task<ServiceResponse<AddEmployeeDTO>> AddEmployee(AddEmployeeDTO employee);
-        public Task<ServiceResponse<Employee>> DeleteEmployee(int id);
+        public Task<DeleteServiceResponse<bool>> DeleteEmployee(int id);
+        public Task<DeleteServiceResponse<bool>> BulkDelete(List<int> ids);
         public Task<ServiceResponse<Employee>> UpdateEmployee(AddEmployeeDTO employee, int id);
     }
 }
