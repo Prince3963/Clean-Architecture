@@ -9,6 +9,7 @@ namespace MyApp.Application.RepoInterface
         Task<bool> DeleteEmployee(int id);
         Task<Employee> UpdateEmployee(Employee employee, int id);
         Task<Employee> GetEmployeeByEmail(string email);
+        Task<Employee> GetEmployeeByName(string name);
         Task<bool> BulkDelete(List<int> ids);
     }
 }

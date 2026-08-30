@@ -26,6 +26,13 @@ namespace MyApp.API.Controllers
             return Ok(employees);
         }
 
+        [HttpGet("Name")]
+        public async Task<IActionResult> GetEmployeeByName(string name)
+        {
+            var employee = await employeeService.GetEmployeeByName(name);
+            return Ok(employee);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddEmployee([FromBody] AddEmployeeDTO employee)
         {

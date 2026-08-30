@@ -10,10 +10,12 @@ namespace MyApp.Application.Services.Implementation
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepo employeeRepo;
+        private readonly IDepartmentRepo departmentRepo;
 
-        public EmployeeService(IEmployeeRepo employeeRepo)
+        public EmployeeService(IEmployeeRepo employeeRepo, IDepartmentRepo departmentRepo   )
         {
             this.employeeRepo = employeeRepo;
+            this.departmentRepo = departmentRepo;
         }
 
         public async Task<ServiceResponse<AddEmployeeDTO>> AddEmployee(AddEmployeeDTO employee)
@@ -22,11 +24,22 @@ namespace MyApp.Application.Services.Implementation
             try
             {
                 var existEmail = await employeeRepo.GetEmployeeByEmail(employee.Email);
+
                 if (existEmail != null)
                 {
                     response.Success = false;
                     response.Message = "Email already exist";
                     response.StatusCode = HttpStatusCode.Conflict;
+
+                    return response;
+                }
+                var existDepartment = await departmentRepo.GetDepartmentsByName(employee.DepartmentName);
+
+                if (existDepartment == null)
+                {
+                    response.Success = false;
+                    response.Message = "Department is not exist";
+                    response.StatusCode = HttpStatusCode.NotFound;
 
                     return response;
                 }
@@ -37,7 +50,9 @@ namespace MyApp.Application.Services.Implementation
                     Email = employee.Email,
                     PhoneNumber = employee.PhoneNumber,
                     Password = employee.Password,
-                    Salary = employee.Salary
+                    Salary = employee.Salary,
+                    DepartmentId = existDepartment.Id,
+                    CreatedBy = existDepartment.Name
                 };
 
                 var result = await employeeRepo.AddEmployee(newEmployee);
@@ -49,7 +64,8 @@ namespace MyApp.Application.Services.Implementation
                     Email = result.Email,
                     PhoneNumber = result.PhoneNumber,
                     Password = result.Password,
-                    Salary = result.Salary
+                    Salary = result.Salary,
+                    DepartmentName = result.DepartmentId.ToString()
                 };
                 response.Success = true;
                 response.Message = "Employee Register Successfully";
@@ -107,14 +123,32 @@ namespace MyApp.Application.Services.Implementation
             }
         }
 
-        public async Task<ServiceResponse<List<Employee>>> GetEmployee()
+        public async Task<ServiceResponse<List<GetEmployeeDTO>>> GetEmployee()
         {
-            var response = new ServiceResponse<List<Employee>>();
+            var response = new ServiceResponse<List<GetEmployeeDTO>>();
             try
             {
                 var result = await employeeRepo.GetEmployee();
 
-                response.Data = result;
+                response.Data = result.Select(e => new GetEmployeeDTO
+                {
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Email = e.Email,
+                    PhoneNumber = e.PhoneNumber,
+                    Password = e.Password,
+                    Salary = e.Salary,
+                    IsDelete = e.IsDelete,
+                    CreatedBy = e.CreatedBy,
+                    CreatedAt = e.CreatedAt,
+                    Department = e.Department == null ? null : new GetDepartmentDTO
+                    {
+                        Name = e.Department.Name,
+                        Description = e.Department.Description,
+                        CreatedBy = e.Department.CreatedBy,
+                        CreatedAt = e.Department.CreatedAt
+                    }
+                }).ToList();
                 response.Success = true;
                 response.Message = "Employees Retrieved Successfully";
                 response.StatusCode = HttpStatusCode.OK;
@@ -129,6 +163,54 @@ namespace MyApp.Application.Services.Implementation
 
                 return response;
             }
+        }
+
+        public async Task<ServiceResponse<GetEmployeeDTO>> GetEmployeeByName(string name)
+        {
+            var response = new ServiceResponse<GetEmployeeDTO>();
+            try
+            {
+                var existEmployee = await employeeRepo.GetEmployeeByName(name);
+                if (existEmployee == null)
+                {
+                    response.Success = false;
+                    response.Message = "Employee not found";
+                    response.StatusCode = HttpStatusCode.NotFound;
+
+                    return response;
+                }
+
+
+                response.Data = new GetEmployeeDTO
+                {
+                    FirstName = existEmployee.FirstName,
+                    LastName = existEmployee.LastName,
+                    Email = existEmployee.Email,
+                    PhoneNumber = existEmployee.PhoneNumber,
+                    Password = existEmployee.Password,
+                    Salary = existEmployee.Salary,
+                    IsDelete = existEmployee.IsDelete,
+                    CreatedBy = existEmployee.CreatedBy,
+                    CreatedAt = existEmployee.CreatedAt,
+                    Department = existEmployee.Department == null ? null : new GetDepartmentDTO
+                    {
+                        Name = existEmployee.Department.Name,
+                        Description = existEmployee.Department.Description,
+                        CreatedBy = existEmployee.Department.CreatedBy,
+                        CreatedAt = existEmployee.Department.CreatedAt
+                    }
+                };
+                response.Success = true;
+                response.Message = "Employee Retrieved Successfully By it's Name";
+            }
+            catch
+            {
+                response.Success = false;
+                response.Message = "Failed to retrieve employee by name";
+                response.Error = "An error occurred while retrieving the employee by name.";
+            }
+
+            return response;
         }
 
         public async Task<ServiceResponse<Employee>> UpdateEmployee(AddEmployeeDTO employee, int id)

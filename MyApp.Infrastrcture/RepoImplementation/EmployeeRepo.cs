@@ -55,7 +55,9 @@ namespace MyApp.Infrastrcture.RepoImplementation
 
         public async Task<List<Employee>> GetEmployee()
         {
-            return await dbContext.Employees.ToListAsync();
+            return await dbContext.Employees
+                .Include(d => d.Department)
+                .ToListAsync();
         }
 
         public async Task<Employee> GetEmployeeByEmail(string email)
@@ -64,6 +66,14 @@ namespace MyApp.Infrastrcture.RepoImplementation
             if (existingEmail == null) return null;
 
             return existingEmail;
+        }
+
+        public async Task<Employee> GetEmployeeByName(string name)
+        {
+            var response = await dbContext.Employees
+                .Include(d => d.Department)
+                .FirstOrDefaultAsync(e => e.FirstName == name || e.LastName == name);
+            return response;
         }
 
         public async Task<Employee> UpdateEmployee(Employee employee, int id)

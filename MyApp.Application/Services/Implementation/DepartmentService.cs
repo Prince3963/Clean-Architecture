@@ -35,6 +35,7 @@ namespace MyApp.Application.Services.Implementation
                     Name = department.Name,
                     Description = department.Description ?? string.Empty,
                     CreatedAt = DateTime.UtcNow,
+                    CreatedBy = "Admin"
                 };
 
                 var result = await departmentRepo.AddDepartment(newDepartment);
@@ -48,9 +49,8 @@ namespace MyApp.Application.Services.Implementation
 
                 response.Data = new AddDepartmentDTO
                 {
-                    Id = result.Id,
                     Name = result.Name,
-                    Description = result.Description
+                    Description = result.Description,
                 };
                 response.Success = true;
                 response.Message = "Department added successfully";

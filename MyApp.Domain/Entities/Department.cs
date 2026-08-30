@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace MyApp.Domain.Entities
 {
     public class Department : GenericEntity
     {
-        public int? EmpId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
 
+        [JsonIgnore]
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }
